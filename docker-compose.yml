@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  filebrowser:
+    image: gtstef/filebrowser:beta
+    container_name: filebrowser
+    environment:
+      FILEBROWSER_CONFIG: "data/config.yaml"
+      FILEBROWSER_ADMIN_PASSWORD: admin   # Change this!
+    volumes:
+      - /path/to/your/files:/folder
+      - ./data:/home/filebrowser/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.filebrowser.rule=Host(`filebrowser.martin-linde.com`)"
+      - "traefik.http.routers.filebrowser.entrypoints=websecure"
+      - "traefik.http.routers.filebrowser.tls.certresolver=letsencrypt"
+      - "traefik.http.services.filebrowser.loadbalancer.server.port=80"
+    networks:
+      - web
+    restart: unless-stopped
+
+networks:
+  web:
+    external: true
